@@ -64,11 +64,11 @@ function firstStart
 {
     ## Start Quickstart initialization
     sendMessage "$_TITLE_QUICKSTART"
-    echo > $_PATH_PROXY/$_FILE_PROXY
 
 
     ## Check environment
     envChecker
+    echo > $_PATH_PROXY/$_FILE_PROXY
 
 
     ## Configure response file for acmetool
@@ -135,9 +135,8 @@ function firstStart
 ## Acmetool reconcile
 SHELL=/bin/sh
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-MAILTO=root
 EOF
-    echo "$(echo $RANDOM | head -c 1) $(echo $RANDOM | head -c 1) * * * root /bin/acmedocker reconcile" >> $_PATH_CRON
+    echo "$(echo $RANDOM | head -c 1) $(echo $RANDOM | head -c 1) * * * /bin/acmedocker reconcile" >> $_PATH_CRON
 
     sendSuccess "$_QS_SUCCESS"
 }

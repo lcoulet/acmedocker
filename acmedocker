@@ -23,7 +23,7 @@ function sendInformation { echo -e "\e[93m$(sendMessage "$@")\e[39m"; }
 function copyDomain
 {
     sendMessage "$_COPY"
-    for DOMAIN in "$@"; do
+    for DOMAIN in $@; do
         sendMessage "$_COPY_CERT $DOMAIN"
         mkdir -p "$_PATH_CERTS/$DOMAIN"
         cp "$_PATH_ORI_CERTS/$DOMAIN/* $_PATH_CERTS/$DOMAIN"
