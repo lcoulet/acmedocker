@@ -1,0 +1,80 @@
+#!/bin/bash
+
+## S T A R T  P A T H   C O N F I G U R A T I O N S
+_PATH_ACCOUNT="/var/lib/acme/accounts"
+_PATH_PROXY="/etc/nginx/conf.d"
+_PATH_ORI_CERTS="/var/lib/acme/live"
+_PATH_CERTS="/etc/acmetool/certs"
+_PATH_LOG="/var/log/acmetool"
+## S T A R T  P A T H   C O N F I G U R A T I O N S
+## S T A R T  M E S S A G E S   L I S T
+_USAGE="Usage: $0 want \e[96mdomain.tld\e[39m ..."
+
+_COPY="[Copy certificate]"
+_COPY_CERT="    - Copy certificate"
+
+_WANT="[New certificate(s)]"
+_WANT_RUN="    - Run acmetool want"
+_WANT_FAILED=" !!! acmetool want failed !!!"
+
+_RENEW="[Renew certificates]"
+_RENEW_RUN="    - Run acmetool reconcile"
+_RENEW_FAILED=" !!! acmetool reconcile failed !!!"
+## E N D   M E S S A G E S   L I S T
+## S T A R T   F U N C T I O N S
+function sendMessage { echo -e "$@"; }
+function sendFatal { echo -e "\e[91m$@\e[39m"; }
+function sendSuccess { echo -e "\e[92m$@\e[39m"; }
+function sendInformation { echo -e "\e[93m$@\e[39m"; }
+
+function copyDomain
+{
+    sendMessage "$_COPY"
+    for DOMAIN in $@; do
+        sendMessage "$_COPY_CERT $DOMAIN"
+        mkdir -p $_PATH_CERTS/$DOMAIN
+        cp $_PATH_ORI_CERTS/$DOMAIN/* $_PATH_CERTS/$DOMAIN
+    done
+}
+
+function acmeWrapper
+{
+    sendMessage "$2"
+    
+    sendMessage "$3 ${@:5}"
+    LTMP=$(mktemp)
+    if ! acmetool $1 ${@:5} 2> $LTMP; then
+        sendFatal "$4"
+        cat $LTMP
+        cat $LTMP >> $_PATH_LOG
+        rm $LTMP
+        return 1
+    fi
+   
+}
+
+function wantDomain
+{
+    if ! acmeWrapper "want" "$_WANT" "$_WANT_RUN" "$_WANT_FAILED" $@; then
+        acmetool unwant $@
+        exit 1
+    fi
+    copyDomain $@
+}
+
+function renewDomain
+{
+    if ! acmeWrapper "--batch reconcile" "$_RENEW" "$_RENEW_RUN" "$_RENEW_FAILED"; then
+        exit 1
+    fi
+    copyDomain $(ls $_PATH_ORI_CERTS)
+}
+## E N D   F U N C T I O N S
+
+if [ "$1" == "want" ]; then
+    wantDomain ${@:2}
+elif [ "$1" == "reconcile" ]; then
+    renewDomain
+else
+    sendMessage "$_USAGE"
+fi
