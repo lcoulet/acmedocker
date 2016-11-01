@@ -91,7 +91,7 @@ function firstStart
             echo "acmetool-quickstart-rsa-key-size": "$RSA_SIZE"
         } >> $_PATH_QS
     else
-        if [ "${ECDSA_CURVE,,}" != "nistp384" ] && [ "${ECDSA_CURVE,,}" != "nistp384" ]; then
+        if [ "${ECDSA_CURVE,,}" != "nistp384" ] && [ "${ECDSA_CURVE,,}" != "nistp521" ]; then
             ECDSA_CURVE="nistp256"
         fi
         {
