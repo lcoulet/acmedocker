@@ -1,7 +1,8 @@
 # Acmedocker
 
-Create and renew Let's encrypt certificates easily (only fonr nginx based server)
+[![Docker Repository on Quay](https://quay.io/repository/pheonyx/acmedocker/status "Docker Repository on Quay")](https://quay.io/repository/pheonyx/acmedocker)
 
+Create and renew Let's encrypt certificates easily (only fonr nginx based server)
 
 ## Directory layout
 * `/certs` contains generated certificates and, optionnally, `dhparams.pem` file
@@ -18,7 +19,7 @@ docker run -d --name container_name \
     -v /etc/nginx/conf.d:/nginx \
     -v /etc/nginx/certs:/certs \
     -e LETSENCRYPT_EMAIL=email@nobody.tld \
-    acmedocker
+    pheonyx/acmedocker:stable
 ```
 
 Then, to Create new certificates, you only run :
