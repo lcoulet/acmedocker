@@ -6,7 +6,7 @@
 [![](https://images.microbadger.com/badges/image/pheonyx/acmedocker.svg)](https://microbadger.com/images/pheonyx/acmedocker "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/pheonyx/acmedocker.svg)](https://microbadger.com/images/pheonyx/acmedocker "Get your own version badge on microbadger.com")
 
-Create and renew Let's encrypt certificates easily (only fonr nginx based server)
+Create and renew _Let's encrypt_ certificates easily (only for nginx based server)
 
 ## Directory layout
 * `/certs` contains generated certificates and, optionnally, `dhparams.pem` file
@@ -14,7 +14,7 @@ Create and renew Let's encrypt certificates easily (only fonr nginx based server
 
 
 ## Usage
-To run this container, you must mount the directories above (`/certs` and `/nginx`) and add `LETSENCRYPT_EMAIL` to the container environment.
+To run this container, you must mount the above directories (`/certs` and `/nginx`) and add `LETSENCRYPT_EMAIL` to the container environment.
 
 For example: 
 
@@ -26,13 +26,17 @@ docker run -d --name container_name \
     pheonyx/acmedocker:stable
 ```
 
-Then, to Create new certificates, you only run :
+Next, for the current configuration _(`/nginx` mounted in `/etc/nginx/conf.d`)_, add this line into your server configuration files
+
+```sh
+include /etc/nginx/conf.d/.acme-nginx
+```
+
+To create new certificates, simply run :
 
 ```sh
 docker exec container_name acmedocker want domain.tld
 ```
-
-To help you, when you create the container, an help is displayed
 
 
 ## Options
