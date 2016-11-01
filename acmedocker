@@ -2,7 +2,7 @@
 
 ## S T A R T  P A T H   C O N F I G U R A T I O N S
 _PATH_ORI_CERTS="/var/lib/acme/live"
-_PATH_CERTS="/etc/acmetool/certs"
+_PATH_CERTS="/certs"
 _PATH_LOG="/var/log/acmetool"
 ## S T A R T  P A T H   C O N F I G U R A T I O N S
 ## S T A R T  M E S S A G E S   L I S T

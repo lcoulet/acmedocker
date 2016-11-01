@@ -3,11 +3,12 @@
 # TODO : Faire en sorte de regenerer le nginx a chaque redemarage (au cas ou)
 
 ## S T A R T  P A T H   C O N F I G U R A T I O N S
-_PATH_ACCOUNT="/var/lib/acme/accounts"
-_PATH_PROXY="/etc/nginx/conf.d"
-_PATH_CERTS="/etc/certs"
+_PATH_PROXY="/nginx"
+_PATH_CERTS="/certs"
+
 _PATH_LOG="/var/log/acmetool"
 _PATH_QS="/etc/acmetool/quickstart.yaml"
+_PATH_ACCOUNT="/var/lib/acme/accounts"
 _PATH_CRON="/var/spool/cron/crontabs/root"
 _FILE_PROXY=".acme-nginx"
 ## S T A R T  P A T H   C O N F I G U R A T I O N S
