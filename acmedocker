@@ -15,10 +15,10 @@ _WANT="[New certificate(s)]"
 _RENEW="[Renew certificates]"
 ## E N D   M E S S A G E S   L I S T
 ## S T A R T   F U N C T I O N S
-function sendMessage { echo -e "$*" | tee $_PATH_LOG; }
-function sendFatal { echo -e "\e[91m$*\e[39m" | tee $_PATH_LOG; }
-function sendSuccess { echo -e "\e[92m$*\e[39m" | tee $_PATH_LOG; }
-function sendInformation { echo -e "\e[93m$*\e[39m" | tee $_PATH_LOG; }
+function sendMessage { echo -e "$@" | tee -a "$_PATH_LOG"; }
+function sendFatal { echo -e "\e[91m$(sendMessage "$@")\e[39m"; }
+function sendSuccess { echo -e "\e[92m$(sendMessage "$@")\e[39m"; }
+function sendInformation { echo -e "\e[93m$(sendMessage "$@")\e[39m"; }
 
 function copyDomain
 {
