@@ -1,8 +1,6 @@
 #!/bin/bash
 
 ## S T A R T  P A T H   C O N F I G U R A T I O N S
-_PATH_ACCOUNT="/var/lib/acme/accounts"
-_PATH_PROXY="/etc/nginx/conf.d"
 _PATH_ORI_CERTS="/var/lib/acme/live"
 _PATH_CERTS="/etc/acmetool/certs"
 _PATH_LOG="/var/log/acmetool"
@@ -14,26 +12,21 @@ _COPY="[Copy certificate]"
 _COPY_CERT="    - Copy certificate"
 
 _WANT="[New certificate(s)]"
-_WANT_RUN="    - Run acmetool want"
-_WANT_FAILED=" !!! acmetool want failed !!!"
-
 _RENEW="[Renew certificates]"
-_RENEW_RUN="    - Run acmetool reconcile"
-_RENEW_FAILED=" !!! acmetool reconcile failed !!!"
 ## E N D   M E S S A G E S   L I S T
 ## S T A R T   F U N C T I O N S
-function sendMessage { echo -e "$@"; }
-function sendFatal { echo -e "\e[91m$@\e[39m"; }
-function sendSuccess { echo -e "\e[92m$@\e[39m"; }
-function sendInformation { echo -e "\e[93m$@\e[39m"; }
+function sendMessage { echo -e "$*" | tee $_PATH_LOG; }
+function sendFatal { echo -e "\e[91m$*\e[39m" | tee $_PATH_LOG; }
+function sendSuccess { echo -e "\e[92m$*\e[39m" | tee $_PATH_LOG; }
+function sendInformation { echo -e "\e[93m$*\e[39m" | tee $_PATH_LOG; }
 
 function copyDomain
 {
     sendMessage "$_COPY"
-    for DOMAIN in $@; do
+    for DOMAIN in "$@"; do
         sendMessage "$_COPY_CERT $DOMAIN"
-        mkdir -p $_PATH_CERTS/$DOMAIN
-        cp $_PATH_ORI_CERTS/$DOMAIN/* $_PATH_CERTS/$DOMAIN
+        mkdir -p "$_PATH_CERTS/$DOMAIN"
+        cp "$_PATH_ORI_CERTS/$DOMAIN/* $_PATH_CERTS/$DOMAIN"
     done
 }
 
@@ -41,21 +34,22 @@ function acmeWrapper
 {
     sendMessage "$2"
     
-    sendMessage "$3 ${@:5}"
+    sendMessage "    - Run acmetool $1 ${*:3}"
     LTMP=$(mktemp)
-    if ! acmetool $1 ${@:5} 2> $LTMP; then
-        sendFatal "$4"
-        cat $LTMP
-        cat $LTMP >> $_PATH_LOG
-        rm $LTMP
+    if ! acmetool $1 ${*:3} 2> "$LTMP"; then
+        sendFatal " !!! acmetool $1 failed !!!"
+        cat "$LTMP"
+        cat "$LTMP" >> "$_PATH_LOG"
+        rm "$LTMP"
         return 1
     fi
+    rm "$LTMP"
    
 }
 
 function wantDomain
 {
-    if ! acmeWrapper "want" "$_WANT" "$_WANT_RUN" "$_WANT_FAILED" $@; then
+    if ! acmeWrapper "want" "$_WANT" $@; then
         acmetool unwant $@
         exit 1
     fi
@@ -64,7 +58,7 @@ function wantDomain
 
 function renewDomain
 {
-    if ! acmeWrapper "--batch reconcile" "$_RENEW" "$_RENEW_RUN" "$_RENEW_FAILED"; then
+    if ! acmeWrapper "--batch reconcile" "$_RENEW"; then
         exit 1
     fi
     copyDomain $(ls $_PATH_ORI_CERTS)

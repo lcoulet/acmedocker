@@ -33,10 +33,10 @@ _HT_HELP_NGIX="    Add \e[96minclude conf.d/$_FILE_PROXY\e[39m in your nginx con
 _HT_HELP_CMD="    $> docker exec $(grep 'docker/' /proc/1/cgroup | tail -1 | sed 's/^.*\///' | cut -c 1-12) acmedocker want domain.tld"
 ## E N D   M E S S A G E S   L I S T
 ## S T A R T   F U N C T I O N S
-function sendMessage { echo -e "$1"; }
-function sendFatal { echo -e "\e[91m$1\e[39m"; }
-function sendSuccess { echo -e "\e[92m$1\e[39m"; }
-function sendInformation { echo -e "\e[93m$1\e[39m"; }
+function sendMessage { echo -e "$@" | tee -a "$_PATH_LOG"; }
+function sendFatal { echo -e "\e[91m$(sendMessage "$@")\e[39m"; }
+function sendSuccess { echo -e "\e[92m$(sendMessage "$@")\e[39m"; }
+function sendInformation { echo -e "\e[93m$(sendMessage "$@")\e[39m"; }
 
 function envChecker()
 {
@@ -157,7 +157,7 @@ function howToUseIt
 {
     sendMessage "$_TITLE_HOWTO"
     sendMessage "$_HT_HELP_NGIX"
-    sendMessage "$_HT_HELP_CMD"
+    echo "$_HT_HELP_CMD" >> $_PATH_LOG
 }
 ## E N D   F U N C T I O N S
 
@@ -168,4 +168,4 @@ fi
 proxyConfig
 howToUseIt
 
-while true; do sleep 900; done
+tail -n 1 -f $_PATH_LOG
